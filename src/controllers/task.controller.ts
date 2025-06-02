@@ -45,6 +45,46 @@ export const getTaskById = async (req: Request, res: Response) => {
     }
 };
 
+export const getTasksByStatus = async (req: Request, res: Response) => {
+    try {
+        const { status } = req.query;
+        const userId = (req as any).userId;
+
+        if (!['pending', 'completed', 'overdue'].includes(String(status))) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'El parámetro "status" debe ser "pending", "completed" o "overdue"',
+            });
+        }
+
+        let filter: any = { userId };
+
+        if (status === 'completed') {
+            filter.completed = true;
+        } else if (status === 'pending') {
+            filter.completed = false;
+            filter.dueDate = { gte: new Date() };
+        } else if (status === 'overdue') {
+            filter.completed = false;
+            filter.dueDate = { lt: new Date() };
+        }
+
+        const tasks = await prisma.task.findMany({ where: filter });
+
+        return res.status(200).json({
+            status: 'success',
+            message: `Tareas filtradas por estado: ${status}`,
+            tasks,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: 'error',
+            message: 'Error searching tasks',
+            error,
+        });
+    }
+};
+
 export const createTask = async (req: Request, res: Response) => {
     try {
         const { title, description, dueDate } = req.body;
