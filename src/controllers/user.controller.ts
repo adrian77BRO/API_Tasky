@@ -92,7 +92,7 @@ export const login = async (req: Request, res: Response) => {
 
         return res.status(500).json({
             status: 'error',
-            message: 'Error registering user',
+            message: 'Error logging in user',
             error: {
                 name: error?.name,
                 message: error?.message,
