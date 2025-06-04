@@ -45,11 +45,17 @@ export const register = async (req: Request, res: Response) => {
                 email: user.email
             }
         });
-    } catch (error) {
+    } catch (error: any) {
+        console.log('Error completo:', error);
+
         return res.status(500).json({
             status: 'error',
             message: 'Error registering user',
-            error
+            error: {
+                name: error?.name,
+                message: error?.message,
+                stack: error?.stack,
+            }
         });
     }
 };
@@ -81,11 +87,17 @@ export const login = async (req: Request, res: Response) => {
                 email: user.email
             }
         });
-    } catch (error) {
+    } catch (error: any) {
+        console.error('Error completo:', error);
+
         return res.status(500).json({
             status: 'error',
-            message: 'Error logging in user',
-            error
+            message: 'Error registering user',
+            error: {
+                name: error?.name,
+                message: error?.message,
+                stack: error?.stack,
+            }
         });
     }
 };
